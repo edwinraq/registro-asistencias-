@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Administrador - Instructores</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      width: 400px;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      position: relative;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header img {
+      width: 50px;
+    }
+
+    .admin-box {
+      display: flex;
+      align-items: center;
+      margin-top: 15px;
+      padding: 10px;
+      background: #f9f9f9;
+      border-radius: 10px;
+    }
+
+    .admin-box img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 10px;
+      background: #ccc;
+    }
+
+    .admin-box span {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .date {
+      margin: 15px 0;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .instructor-card {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      background: #f9f9f9;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .instructor-card:hover {
+      background: #e6f0ff;
+    }
+
+    .instructor-card img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .instructor-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .instructor-info strong {
+      font-size: 14px;
+    }
+
+    .instructor-info small {
+      font-size: 12px;
+      color: gray;
+    }
+
+    .floating-btn {
+      position: absolute;
+      bottom: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #28a745;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    /* Modal para agregar instructores */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      width: 300px;
+      text-align: center;
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: 8px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .modal-content button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background: #28a745;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close-btn {
+      float: right;
+      font-size: 18px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Encabezado -->
+    <div class="header">
+      <span>&lt;&lt;</span>
+      <img src="foto sena.png" alt="Logo SENA">
+    </div>
+
+    <!-- Administrador -->
+    <div class="admin-box">
+      <img src="https://cdn-icons-png.flaticon.com/512/1946/1946429.png" alt="Admin">
+      <span>Administrador</span>
+    </div>
+
+    <!-- Fecha -->
+    <div class="date">26 / 10 / 2025</div>
+
+    <!-- Lista de Instructores -->
+    <div id="instructores">
+      <div class="instructor-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="">
+        <div class="instructor-info">
+          <strong>Edwin Raquejo</strong>
+          <small>Instructor</small>
+        </div>
+      </div>
+
+      <div class="instructor-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="">
+        <div class="instructor-info">
+          <strong>Mariana Uribe</strong>
+          <small>Instructor</small>
+        </div>
+      </div>
+
+      <div class="instructor-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="">
+        <div class="instructor-info">
+          <strong>Camila Ruiz</strong>
+          <small>Instructor</small>
+        </div>
+      </div>
+
+      <div class="instructor-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="">
+        <div class="instructor-info">
+          <strong>Alejandra Yela</strong>
+          <small>Instructor</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón flotante -->
+    <div class="floating-btn" onclick="openModal()">+</div>
+  </div>
+
+  <!-- Modal para agregar instructores -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">×</span>
+      <h3>Agregar Instructor</h3>
+      <input type="text" id="nombreInstructor" placeholder="Nombre completo">
+      <button onclick="agregarInstructor()">Guardar</button>
+    </div>
+  </div>
+
+  <script>
+    // Abrir modal
+    function openModal() {
+      document.getElementById("modal").style.display = "flex";
+    }
+
+    // Cerrar modal
+    function closeModal() {
+      document.getElementById("modal").style.display = "none";
+    }
+
+    // Agregar nuevo instructor dinámicamente
+    function agregarInstructor() {
+      const nombre = document.getElementById("nombreInstructor").value.trim();
+      if(nombre === "") {
+        alert("Ingrese un nombre");
+        return;
+      }
+
+      const nuevoInstructor = document.createElement("div");
+      nuevoInstructor.classList.add("instructor-card");
+      nuevoInstructor.innerHTML = `
+        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="">
+        <div class="instructor-info">
+          <strong>${nombre}</strong>
+          <small>Instructor</small>
+        </div>
+      `;
+
+      document.getElementById("instructores").appendChild(nuevoInstructor);
+
+      document.getElementById("nombreInstructor").value = "";
+      closeModal();
+    }
+  </script>
+</body>
+</html>

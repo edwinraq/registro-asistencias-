@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registros - SENA</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      width: 380px;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .header h2 {
+      font-size: 20px;
+      margin: 0;
+    }
+
+    .header img {
+      width: 50px;
+    }
+
+    .date {
+      font-size: 14px;
+      color: #333;
+      text-align: right;
+    }
+
+    .guardia {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .guardia .foto {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #ccc;
+      margin-right: 10px;
+    }
+
+    .guardia-info {
+      font-size: 14px;
+    }
+
+    .guardia-info .nombre {
+      background-color: #28a745;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .instructores h3 {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .instructor {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f9f9f9;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .instructor .foto {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #333;
+      margin-right: 10px;
+    }
+
+    .instructor-info {
+      flex: 1;
+    }
+
+    .instructor-info strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .estado {
+      color: red;
+      font-weight: bold;
+      font-size: 13px;
+      margin-left: 10px;
+    }
+
+    .btn-salida {
+      background: #f28b82;
+      border: none;
+      color: white;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-salida:hover {
+      background: #e57373;
+    }
+
+    .floating-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #28a745;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>REGISTROS</h2>
+      <div>
+        <div class="date">26 / 10 / 2025</div>
+        <img src="foto sena.png" alt="SENA Logo">
+      </div>
+    </div>
+
+    <div class="guardia">
+      <div class="foto"></div>
+      <div class="guardia-info">
+        <div class="nombre">Celador: Emili</div>
+        Puesto: 1<br>
+        #####
+      </div>
+    </div>
+
+    <div class="instructores">
+      <h3>INSTRUCTORES</h3>
+
+      <div class="instructor">
+        <div class="foto"></div>
+        <div class="instructor-info">
+          <strong>Edwin Raquejo</strong>
+          Hora de entrada: 6:00<br>
+          Hora de salida: <span class="salida"></span>
+        </div>
+        <div>
+          <span class="estado">Pendiente</span><br>
+          <button class="btn-salida">DAR SALIDA</button>
+        </div>
+      </div>
+
+      <div class="instructor">
+        <div class="foto"></div>
+        <div class="instructor-info">
+          <strong>Suzanita Rojas</strong>
+          Hora de entrada: 6:05<br>
+          Hora de salida: <span class="salida"></span>
+        </div>
+        <div>
+          <span class="estado">Pendiente</span><br>
+          <button class="btn-salida">DAR SALIDA</button>
+        </div>
+      </div>
+
+      <div class="instructor">
+        <div class="foto"></div>
+        <div class="instructor-info">
+          <strong>Camila Alvar</strong>
+          Hora de entrada: ##<br>
+          Hora de salida: <span class="salida"></span>
+        </div>
+        <div>
+          <span class="estado">Pendiente</span><br>
+          <button class="btn-salida">DAR SALIDA</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="floating-btn">+</div>
+
+  <script>
+    // Funcionalidad de "DAR SALIDA"
+    document.querySelectorAll(".btn-salida").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const parent = this.closest(".instructor");
+        const salida = parent.querySelector(".salida");
+        const estado = parent.querySelector(".estado");
+
+        const hora = new Date();
+        const horaSalida = hora.getHours() + ":" + (hora.getMinutes()<10?'0':'') + hora.getMinutes();
+
+        salida.textContent = horaSalida;
+        estado.textContent = "Registrado ✅";
+        estado.style.color = "green";
+        this.disabled = true;
+        this.style.background = "#ccc";
+        this.textContent = "SALIDA REGISTRADA";
+      });
+    });
+
+    // Botón flotante (puede abrir otra pantalla o modal)
+    document.querySelector(".floating-btn").addEventListener("click", () => {
+      alert("Abrir formulario para agregar nuevo registro.");
+    });
+  </script>
+</body>
+</html>
+

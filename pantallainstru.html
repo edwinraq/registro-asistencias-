@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pantalla Instructor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 400px;
+            background-color: #fff;
+            margin: 40px auto;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .logo {
+            width: 60px;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+
+        .info {
+            text-align: left;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .info span {
+            font-weight: bold;
+        }
+
+        .estado {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .no {
+            color: red;
+        }
+
+        .si {
+            color: green;
+        }
+
+        #qrcode {
+            margin: 15px auto;
+        }
+
+        h3 {
+            color: #333;
+            margin-top: 20px;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border-bottom: 1px solid #ddd;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #2e7d32;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            border: none;
+            background-color: #2e7d32;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #1b5e20;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <img src="foto sena.png" alt="SENA" class="logo">
+        <h2>Panel del Instructor</h2>
+        
+        <div class="info">
+            <p><span>Nombre:</span> Edwin Raquejo</p>
+            <p><span>Número de placa:</span> 001</p>
+            <p><span>Asistencia:</span> <span id="estado" class="no">NO</span></p>
+        </div>
+
+        <div id="qrcode"></div>
+
+        <button onclick="cambiarEstado()">Marcar Asistencia</button>
+
+        <h3>Historial de Asistencias</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Hora Entrada</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody id="historial">
+                <tr><td>2025-10-06</td><td>06:00</td><td>SI</td></tr>
+                <tr><td>2025-10-07</td><td>06:05</td><td>SI</td></tr>
+                <tr><td>2025-10-08</td><td>—</td><td>NO</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Librería para generar QR -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+
+    <script>
+        // Datos del instructor (esto luego se conectará a la base de datos)
+        const instructor = {
+            nombre: "Edwin Raquejo",
+            placa: "001",
+            asistencia: "NO"
+        };
+
+        // Generar QR automáticamente
+        function generarQR() {
+            const qrContainer = document.getElementById("qrcode");
+            qrContainer.innerHTML = "";
+            const dataQR = `Instructor: ${instructor.nombre}\nPlaca: ${instructor.placa}\nAsistencia: ${instructor.asistencia}`;
+            new QRCode(qrContainer, {
+                text: dataQR,
+                width: 128,
+                height: 128
+            });
+        }
+
+        // Cambiar estado de asistencia
+        function cambiarEstado() {
+            const estado = document.getElementById("estado");
+            if (instructor.asistencia === "NO") {
+                instructor.asistencia = "SI";
+                estado.textContent = "SI";
+                estado.classList.remove("no");
+                estado.classList.add("si");
+            } else {
+                instructor.asistencia = "NO";
+                estado.textContent = "NO";
+                estado.classList.remove("si");
+                estado.classList.add("no");
+            }
+            generarQR();
+        }
+
+        // Cargar QR al inicio
+        generarQR();
+    </script>
+    <script>
+fetch('http://localhost:3000/instructores')
+  .then(res => res.json())
+  .then(data => {
+    console.log('Instructores:', data);
+  })
+  .catch(err => console.error(err));
+</script>
+
+</body>
+</html>
