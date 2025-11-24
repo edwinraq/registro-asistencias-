@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear Instructor - SENA</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .container img {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 50px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 20px;
+      color: #2c3e50;
+    }
+
+    .logout-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+      z-index: 1000;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+    }
+  </style>
+</head>
+
+<body>
+  <button class="logout-btn" onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
+
+  <div class="container">
+    <img src="assets/foto sena.png" alt="SENA Logo">
+    <h2>Crear Instructor</h2>
+
+    <form id="formInstructor">
+      <label for="nombre">Nombres y Apellidos</label>
+      <input type="text" id="nombre" name="nombre" placeholder="Ej: Juan Pérez" required>
+
+      <label for="correo">Correo</label>
+      <input type="email" id="correo" name="correo" placeholder="Ej: juanperez@mail.com" required>
+
+      <label for="telefono">Número de Teléfono</label>
+      <input type="tel" id="telefono" name="telefono" placeholder="Ej: 3104567890" required pattern="[0-9]{10}">
+
+      <label for="documento">Documento</label>
+      <input type="text" id="documento" name="documento" placeholder="Ej: 123456789" required>
+
+      <button type="submit">Crear Perfil</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("formInstructor").addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const nombreCompleto = document.getElementById("nombre").value.trim();
+      const correo = document.getElementById("correo").value.trim();
+      const telefono = document.getElementById("telefono").value.trim();
+      const documento = document.getElementById("documento").value.trim();
+
+      // Separar nombres y apellidos
+      const partes = nombreCompleto.split(' ');
+      const nombres = partes[0] || nombreCompleto;
+      const apellidos = partes.slice(1).join(' ') || '-';  // Si no hay apellido, usar "-"
+
+      if (!nombres || !correo || !telefono || !documento) {
+        alert("Por favor complete todos los campos.");
+        return;
+      }
+
+      // Validar que haya al menos apellido
+      if (apellidos === '-') {
+        alert("⚠️ Por favor ingrese nombres Y apellidos (Ej: Juan Pérez)");
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:3000/api/instructores', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            nombres: nombres,
+            apellidos: apellidos,
+            correo: correo,
+            telefono: telefono,
+            documento: documento
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          alert("✅ Instructor creado exitosamente");
+          // Redirigir al panel de administrador
+          window.location.href = 'administrador.html';
+        } else {
+          alert("❌ Error: " + (data.error || 'No se pudo crear el instructor'));
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert("❌ Error al conectar con el servidor");
+      }
+    });
+
+    function cerrarSesion() {
+      if (confirm('¿Deseas cerrar sesión?')) {
+        window.location.href = 'iniciosesion.html';
+      }
+    }
+  </script>
+</body>
+
+</html>

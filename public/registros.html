@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registros - SENA</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Estilos específicos de registros */
+    .date {
+      font-size: 14px;
+      color: #2c3e50;
+      text-align: right;
+    }
+
+    .guardia {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      background: #e8f5e9;
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    .guardia .foto {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #28a745;
+      margin-right: 10px;
+    }
+
+    .guardia-info {
+      font-size: 14px;
+      color: #2c3e50;
+    }
+
+    .guardia-info .nombre {
+      background-color: #28a745;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .instructores h3 {
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+
+    .instructor .foto {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      margin-right: 10px;
+    }
+
+    .btn-salida:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .logout-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+      z-index: 1000;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+    }
+  </style>
+</head>
+
+<body>
+  <button class="logout-btn" onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
+
+  <div class="container">
+    <div class="header">
+      <h2>REGISTROS</h2>
+      <div>
+        <div class="date">26 / 10 / 2025</div>
+        <img src="assets/foto sena.png" alt="SENA Logo">
+      </div>
+    </div>
+
+    <!-- Menú de navegación -->
+    <div class="nav-menu">
+      <button class="nav-btn" onclick="window.location.href='administrador.html'">👥 Instructores</button>
+      <button class="nav-btn" onclick="window.location.href='asistencias.html'">📋 Asistencias</button>
+      <button class="nav-btn active" onclick="window.location.href='registros.html'">✅ Registros</button>
+      <button class="nav-btn" onclick="window.location.href='codigoqr.html'">📷 QR</button>
+    </div>
+
+    <div class="guardia">
+      <div class="foto"></div>
+      <div class="guardia-info">
+        <div class="nombre">Celador: Emili</div>
+        Puesto: 1<br>
+        #####
+      </div>
+    </div>
+
+    <div class="instructores">
+      <h3>INSTRUCTORES</h3>
+      <div id="lista-instructores">
+        <!-- Se cargará dinámicamente -->
+      </div>
+    </div>
+  </div>
+
+  <div class="floating-btn" onclick="mostrarModalRegistro()">+</div>
+
+  <script>
+    let instructores = [];
+    let asistenciasHoy = [];
+
+    // Cargar instructores y asistencias del día
+    async function cargarDatos() {
+      try {
+        // Cargar instructores
+        const respInstructores = await fetch('http://localhost:3000/api/instructores');
+        instructores = await respInstructores.json();
+
+        // Cargar asistencias de hoy
+        const respAsistencias = await fetch('http://localhost:3000/api/asistencias/hoy');
+        asistenciasHoy = await respAsistencias.json();
+
+        renderInstructores();
+      } catch (error) {
+        console.error('Error al cargar datos:', error);
+        alert('Error al cargar los datos');
+      }
+    }
+
+    function renderInstructores() {
+      const contenedor = document.getElementById('lista-instructores');
+      contenedor.innerHTML = '';
+
+      asistenciasHoy.forEach(asistencia => {
+        const div = document.createElement('div');
+        div.classList.add('instructor');
+
+        const tieneSalida = asistencia.hora_salida !== null;
+        const estadoTexto = tieneSalida ? 'Registrado ✅' : 'Pendiente';
+        const estadoColor = tieneSalida ? 'green' : 'red';
+
+        div.innerHTML = `
+          <div class="foto"></div>
+          <div class="instructor-info">
+            <strong>${asistencia.nombres} ${asistencia.apellidos}</strong>
+            Hora de entrada: ${asistencia.hora_entrada || 'N/A'}<br>
+            Hora de salida: <span class="salida">${asistencia.hora_salida || ''}</span>
+          </div>
+          <div>
+            <span class="estado" style="color: ${estadoColor}">${estadoTexto}</span><br>
+            ${!tieneSalida ? `<button class="btn-salida" onclick="registrarSalida(${asistencia.id})">DAR SALIDA</button>` : '<button class="btn-salida" disabled style="background:#ccc;">SALIDA REGISTRADA</button>'}
+          </div>
+        `;
+
+        contenedor.appendChild(div);
+      });
+
+      if (asistenciasHoy.length === 0) {
+        contenedor.innerHTML = '<p style="text-align:center; color:#999;">No hay asistencias registradas hoy</p>';
+      }
+    }
+
+    // Registrar salida
+    async function registrarSalida(asistenciaId) {
+      try {
+        const response = await fetch(`http://localhost:3000/api/asistencias/salida/${asistenciaId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ hora_salida: new Date().toTimeString().split(' ')[0] })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          alert('✅ Salida registrada exitosamente');
+          cargarDatos(); // Recargar datos
+        } else {
+          alert('❌ Error al registrar salida');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Error al conectar con el servidor');
+      }
+    }
+
+    // Mostrar modal para registrar nueva entrada
+    function mostrarModalRegistro() {
+      const instructorId = prompt("Ingrese el ID del instructor:");
+      if (instructorId) {
+        registrarEntrada(instructorId);
+      }
+    }
+
+    // Registrar nueva entrada
+    async function registrarEntrada(instructorId) {
+      try {
+        const response = await fetch('http://localhost:3000/api/asistencias/entrada', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            instructor_id: instructorId,
+            fecha: new Date().toISOString().split('T')[0],
+            hora_entrada: new Date().toTimeString().split(' ')[0]
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          alert('✅ Entrada registrada exitosamente');
+          cargarDatos();
+        } else {
+          alert('❌ Error: ' + (data.error || 'No se pudo registrar la entrada'));
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Error al conectar con el servidor');
+      }
+    }
+
+    // Cargar datos al iniciar
+    cargarDatos();
+
+    // Actualizar fecha actual
+    const fechaDiv = document.querySelector('.date');
+    const hoy = new Date();
+    fechaDiv.textContent = `${hoy.getDate()} / ${hoy.getMonth() + 1} / ${hoy.getFullYear()}`;
+
+    function cerrarSesion() {
+      if (confirm('¿Deseas cerrar sesión?')) {
+        window.location.href = 'iniciosesion.html';
+      }
+    }
+  </script>
+</body>
+
+</html>

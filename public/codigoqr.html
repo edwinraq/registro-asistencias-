@@ -1,49 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Asistencia QR - SENA</title>
+  <link rel="stylesheet" href="css/style.css">
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
-    }
-
-    .container {
-      background-color: #fff;
-      width: 420px;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .header h2 {
-      font-size: 20px;
-      margin: 0;
-    }
-
-    .header img {
-      width: 50px;
-    }
-
+    /* Estilos específicos de QR */
     .date {
       font-size: 14px;
-      color: #333;
+      color: #2c3e50;
       text-align: right;
     }
 
@@ -53,10 +22,10 @@
     }
 
     .qr-box .title {
-      background: #f44336;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      padding: 8px;
-      border-radius: 6px;
+      padding: 10px;
+      border-radius: 10px;
       font-weight: bold;
       margin-bottom: 10px;
     }
@@ -64,77 +33,33 @@
     #reader {
       width: 280px;
       margin: auto;
-    }
-
-    .btn-asistencia {
-      width: 100%;
-      padding: 12px;
-      background: #28a745;
-      color: white;
-      font-weight: bold;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      margin: 10px 0;
-    }
-
-    .btn-asistencia:hover {
-      background: #218838;
-    }
-
-    .instructores {
-      margin-top: 10px;
-    }
-
-    .instructor {
-      background: #f9f9f9;
-      padding: 10px;
+      border: 2px solid #667eea;
       border-radius: 10px;
-      margin-bottom: 15px;
-    }
-
-    .instructor-info {
-      font-size: 14px;
-      margin-bottom: 8px;
-    }
-
-    .estado {
-      font-weight: bold;
-      color: red;
-      font-size: 14px;
     }
 
     .qr-generado {
       text-align: center;
-    }
-
-    .floating-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #28a745;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-size: 28px;
-      cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      margin-top: 10px;
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <div class="header">
       <h2>&lt;&lt; ASISTENCIA</h2>
       <div>
         <div class="date">26 / 10 / 2025</div>
-        <img src="foto sena.png" alt="SENA Logo">
+        <img src="assets/foto sena.png" alt="SENA Logo">
       </div>
+    </div>
+
+    <!-- Menú de navegación -->
+    <div class="nav-menu">
+      <button class="nav-btn" onclick="window.location.href='administrador.html'">👥 Instructores</button>
+      <button class="nav-btn" onclick="window.location.href='asistencias.html'">📋 Asistencias</button>
+      <button class="nav-btn" onclick="window.location.href='registros.html'">✅ Registros</button>
+      <button class="nav-btn active" onclick="window.location.href='codigoqr.html'">📷 QR</button>
     </div>
 
     <!-- Lector QR -->
@@ -216,4 +141,5 @@
     });
   </script>
 </body>
+
 </html>

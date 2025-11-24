@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asistencias - SENA</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Estilos específicos de asistencias */
+    .btns {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      gap: 10px;
+    }
+
+    .btns button {
+      flex: 1;
+      padding: 8px 10px;
+      background: #f8f9fa;
+      border: 2px solid #e0e0e0;
+      font-size: 13px;
+    }
+
+    .btns button:hover {
+      background: #e9ecef;
+    }
+
+    .asistencia {
+      border-bottom: 1px solid #e0e0e0;
+      padding: 10px 0;
+    }
+
+    .asistencia:last-child {
+      border-bottom: none;
+    }
+
+    .hora {
+      font-size: 12px;
+      color: #6c757d;
+      margin-bottom: 3px;
+    }
+
+    .nombre {
+      font-weight: bold;
+      font-size: 15px;
+      color: #2c3e50;
+    }
+
+    .rol {
+      font-size: 13px;
+      color: #6c757d;
+    }
+
+    .salida {
+      font-size: 12px;
+      color: #6c757d;
+    }
+
+    .logout-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+      z-index: 1000;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+    }
+  </style>
+</head>
+
+<body>
+  <button class="logout-btn" onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Asistencias</h2>
+      <img src="assets/foto sena.png" class="logo">
+    </div>
+
+    <!-- Menú de navegación -->
+    <div class="nav-menu">
+      <button class="nav-btn" onclick="window.location.href='administrador.html'">👥 Instructores</button>
+      <button class="nav-btn active" onclick="window.location.href='asistencias.html'">📋 Asistencias</button>
+      <button class="nav-btn" onclick="window.location.href='registros.html'">✅ Registros</button>
+      <button class="nav-btn" onclick="window.location.href='codigoqr.html'">📷 QR</button>
+    </div>
+
+    <div class="btns">
+      <button onclick="mostrarHoy()">Hoy</button>
+      <button onclick="cambiarFecha()">Mie 26 Feb</button>
+    </div>
+
+    <div id="lista-asistencias"></div>
+  </div>
+
+  <div class="fab" onclick="window.location.href='registros.html'">+</div>
+
+  <script>
+    let asistencias = [];
+    let fechaActual = new Date().toISOString().split('T')[0];
+
+    // Cargar asistencias desde la base de datos
+    async function cargarAsistencias(fecha = null) {
+      try {
+        const url = fecha
+          ? `http://localhost:3000/api/asistencias?fecha=${fecha}`
+          : 'http://localhost:3000/api/asistencias/hoy';
+
+        const response = await fetch(url);
+        asistencias = await response.json();
+        renderAsistencias();
+      } catch (error) {
+        console.error('Error al cargar asistencias:', error);
+        alert('Error al cargar las asistencias');
+      }
+    }
+
+    function renderAsistencias() {
+      const contenedor = document.getElementById("lista-asistencias");
+      contenedor.innerHTML = "";
+
+      if (asistencias.length === 0) {
+        contenedor.innerHTML = '<p style="text-align:center; color:#999;">No hay asistencias registradas</p>';
+        return;
+      }
+
+      asistencias.forEach(a => {
+        const nombreCompleto = `${a.nombres} ${a.apellidos}`;
+        const horaEntrada = a.hora_entrada || 'N/A';
+        const horaSalida = a.hora_salida || '';
+
+        contenedor.innerHTML += `
+          <div class="asistencia">
+            <div class="hora">${horaEntrada}</div>
+            <div class="nombre">${nombreCompleto}</div>
+            <div class="rol">Instructor - Doc: ${a.documento}</div>
+            <div class="salida">Hora de salida: ${horaSalida}</div>
+          </div>
+        `;
+      });
+    }
+
+    // Botón Hoy
+    function mostrarHoy() {
+      fechaActual = new Date().toISOString().split('T')[0];
+      cargarAsistencias();
+    }
+
+    // Botón cambiar fecha
+    function cambiarFecha() {
+      const nuevaFecha = prompt("Ingrese la fecha (YYYY-MM-DD):", fechaActual);
+      if (nuevaFecha) {
+        fechaActual = nuevaFecha;
+        cargarAsistencias(fechaActual);
+      }
+    }
+
+    // Cargar asistencias al iniciar
+    cargarAsistencias();
+
+    function cerrarSesion() {
+      if (confirm('¿Deseas cerrar sesión?')) {
+        window.location.href = 'iniciosesion.html';
+      }
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Instructores - SENA</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background: url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 0;
+        }
+
+        .split-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            max-width: 1100px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .left-panel {
+            flex: 1;
+            background: linear-gradient(135deg, #7FB77E 0%, #6FA86F 100%);
+            padding: 50px 40px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .left-panel img {
+            width: 120px;
+            margin-bottom: 30px;
+        }
+
+        .left-panel h1 {
+            font-size: 32px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .left-panel p {
+            font-size: 16px;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+
+
+
+        .right-panel {
+            flex: 1;
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h2 {
+            color: #2c3e50;
+            font-size: 26px;
+            margin-bottom: 8px;
+        }
+
+        .login-header p {
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .sugerencia {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .role-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .role-btn {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .role-btn:hover {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+        }
+
+        .role-btn.active {
+            border-color: #4CAF50;
+            background: #4CAF50;
+            color: white;
+        }
+
+        .role-btn .icon {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .role-btn .label {
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+
+        .input-with-icon input {
+            padding-left: 45px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+            font-size: 18px;
+        }
+
+        .fortaleza {
+            font-size: 12px;
+            margin-top: 5px;
+            color: #6c757d;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .remember-me input[type="checkbox"] {
+            display: none;
+        }
+
+        .remember-me label {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #2c3e50;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .remember-me label::before {
+            content: '';
+            width: 45px;
+            height: 24px;
+            background: #ccc;
+            border-radius: 12px;
+            margin-right: 10px;
+            position: relative;
+            transition: background 0.3s ease;
+        }
+
+        .remember-me label::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            left: 2px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .remember-me input[type="checkbox"]:checked+label::before {
+            background: #4CAF50;
+        }
+
+        .remember-me input[type="checkbox"]:checked+label::after {
+            transform: translateX(21px);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: #7FB77E !important;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: none;
+        }
+
+        .btn-login:hover {
+            background: #6FA86F !important;
+            box-shadow: 0 4px 12px rgba(127, 183, 126, 0.3);
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .forgot-password a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        #mensaje {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+        }
+
+        #mensaje.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .footer {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .footer a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .split-container {
+                flex-direction: column;
+                max-width: 95%;
+            }
+
+            .left-panel {
+                padding: 30px 20px;
+            }
+
+            .left-panel h1 {
+                font-size: 24px;
+            }
+
+            .right-panel {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="split-container">
+        <!-- Panel Izquierdo -->
+        <div class="left-panel">
+            <img src="assets/foto sena.png" alt="Logo SENA">
+            <h1>Gestión de Instructores - SENA</h1>
+            <p>Planifica, controla y visualiza la operación académica con una experiencia moderna y confiable.</p>
+        </div>
+
+        <!-- Panel Derecho - Formulario -->
+        <div class="right-panel">
+            <div class="login-header">
+                <h2>Iniciar sesión</h2>
+                <p>Usa tu correo institucional y el rol asignado</p>
+            </div>
+
+            <p class="sugerencia">Sugerencia: dominio @misena.edu.co</p>
+
+            <!-- Selector de Rol -->
+            <div class="role-selector">
+                <div class="role-btn active" data-role="admin" onclick="selectRole('admin')">
+                    <div class="icon">👤</div>
+                    <div class="label">Administrador</div>
+                </div>
+                <div class="role-btn" data-role="vigilante" onclick="selectRole('vigilante')">
+                    <div class="icon">🛡️</div>
+                    <div class="label">Vigilante</div>
+                </div>
+            </div>
+
+            <!-- Formulario -->
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Correo electrónico</label>
+                    <div class="input-with-icon">
+                        <i>📧</i>
+                        <input type="text" id="email" placeholder="raquejo58@gmail.com" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <div class="input-with-icon">
+                        <i>🔒</i>
+                        <input type="password" id="password" placeholder="••••••••" required>
+                        <span class="password-toggle" onclick="togglePassword()">👁️</span>
+                    </div>
+                    <div class="fortaleza">La contraseña debe tener al menos 6 caracteres.</div>
+                </div>
+
+                <div class="remember-me">
+                    <input type="checkbox" id="remember">
+                    <label for="remember">Recuérdame</label>
+                </div>
+
+                <button type="submit" class="btn-login">Ingresar</button>
+
+                <div id="mensaje"></div>
+            </form>
+
+            <div class="forgot-password">
+                <a href="#">¿Olvidaste tu contraseña?</a>
+            </div>
+
+            <div class="footer">
+                <p><a href="#">Política de privacidad</a> | <a href="#">Términos de uso</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedRole = 'admin';
+
+        function selectRole(role) {
+            selectedRole = role;
+            document.querySelectorAll('.role-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-role="${role}"]`).classList.add('active');
+        }
+
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const mensaje = document.getElementById('mensaje');
+
+            // Extraer usuario del email (parte antes del @)
+            const username = email.includes('@') ? email.split('@')[0] : email;
+
+            // Validar que el rol coincida
+            const roleUsernames = {
+                'admin': ['admin', 'administrador'],
+                'vigilante': ['vigilante', 'guardia', 'seguridad']
+            };
+
+            const validUsernames = roleUsernames[selectedRole];
+            if (!validUsernames.includes(username.toLowerCase())) {
+                mensaje.className = 'error';
+                mensaje.textContent = `⚠️ El usuario "${username}" no corresponde al rol de ${selectedRole}`;
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Validar que el tipo de usuario coincida con el rol seleccionado
+                    if (data.tipo !== selectedRole) {
+                        mensaje.className = 'error';
+                        mensaje.textContent = `⚠️ Este usuario no tiene permisos de ${selectedRole}`;
+                        return;
+                    }
+
+                    localStorage.setItem('usuario', data.usuario);
+                    localStorage.setItem('tipo', data.tipo);
+
+                    // Redirigir según el tipo de usuario
+                    if (data.tipo === 'admin') {
+                        window.location.href = 'administrador.html';
+                    } else if (data.tipo === 'vigilante') {
+                        window.location.href = 'vigilante.html';
+                    } else {
+                        window.location.href = 'pantallainstru.html';
+                    }
+                } else {
+                    mensaje.className = 'error';
+                    mensaje.textContent = data.message || '❌ Usuario o contraseña incorrectos';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mensaje.className = 'error';
+                mensaje.textContent = '❌ Error al conectar con el servidor';
+            }
+        });
+    </script>
+</body>
+
+</html>

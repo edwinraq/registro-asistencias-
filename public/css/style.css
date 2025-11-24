@@ -1,0 +1,406 @@
+/* ===============================
+   ESTILOS GLOBALES - SENA
+   =============================== */
+
+/* Reset y configuración básica */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #7FB77E 0%, #6FA86F 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* ===============================
+   CONTENEDORES
+   =============================== */
+.container,
+.card,
+.login-container {
+    background: white;
+    width: 100%;
+    max-width: 420px;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+/* ===============================
+   HEADER
+   =============================== */
+.header,
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.header h2,
+.card-header h2 {
+    font-size: 22px;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.header img,
+.card-header img,
+.logo {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+/* ===============================
+   NAVEGACIÓN
+   =============================== */
+.nav-menu {
+    display: flex;
+    justify-content: space-around;
+    gap: 8px;
+    margin: 20px 0;
+}
+
+.nav-btn {
+    flex: 1;
+    padding: 10px 8px;
+    background: #f8f9fa;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    color: #6c757d;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.nav-btn:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nav-btn.active {
+    background: linear-gradient(135deg, #7FB77E 0%, #6FA86F 100%);
+    color: white;
+    border-color: #7FB77E;
+}
+
+/* ===============================
+   FORMULARIOS
+   =============================== */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+select,
+textarea {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 8px 0;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #7FB77E;
+    box-shadow: 0 0 0 3px rgba(127, 183, 126, 0.1);
+}
+
+label {
+    display: block;
+    margin: 15px 0 5px 0;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+/* ===============================
+   BOTONES
+   =============================== */
+button,
+.btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+button:hover,
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Botones primarios */
+button[type="submit"],
+.btn-primary {
+    background: linear-gradient(135deg, #7FB77E 0%, #6FA86F 100%);
+    color: white;
+}
+
+button[type="submit"]:hover,
+.btn-primary:hover {
+    background: linear-gradient(135deg, #6FA86F 0%, #5F9E5F 100%);
+}
+
+/* Botones de éxito */
+.btn-entrada,
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn-entrada:hover,
+.btn-success:hover {
+    background: #218838;
+}
+
+/* Botones de peligro */
+.btn-salida,
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-salida:hover,
+.btn-danger:hover {
+    background: #c82333;
+}
+
+/* ===============================
+   TARJETAS / CARDS
+   =============================== */
+.instructor-card,
+.instructor,
+.asistencia {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    border-left: 4px solid #7FB77E;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.instructor-card:hover,
+.instructor:hover {
+    background: #e9ecef;
+    transform: translateX(5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.instructor-card.presente {
+    border-left-color: #28a745;
+    background: #d4edda;
+}
+
+/* ===============================
+   INFORMACIÓN
+   =============================== */
+.vigilante-info,
+.admin-box,
+.guardia {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    padding: 15px;
+    border-radius: 12px;
+    margin: 15px 0;
+    border-left: 4px solid #28a745;
+}
+
+.vigilante-info h3,
+.admin-box span {
+    color: #1b5e20;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+/* ===============================
+   ESTADOS Y BADGES
+   =============================== */
+.status,
+.estado {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.status.entrada,
+.estado.entrada {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status.salida,
+.estado.salida {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* ===============================
+   MENSAJES
+   =============================== */
+.mensaje {
+    padding: 12px 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+    text-align: center;
+    font-weight: 600;
+    display: none;
+}
+
+.mensaje.exito {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    display: block;
+}
+
+.mensaje.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    display: block;
+}
+
+/* ===============================
+   BOTÓN FLOTANTE
+   =============================== */
+.floating-btn,
+.fab {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background: linear-gradient(135deg, #7FB77E 0%, #6FA86F 100%);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 0 5px 20px rgba(127, 183, 126, 0.4);
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.floating-btn:hover,
+.fab:hover {
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 8px 25px rgba(127, 183, 126, 0.6);
+}
+
+/* ===============================
+   BÚSQUEDA
+   =============================== */
+.search-box {
+    margin: 20px 0;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+/* ===============================
+   UTILIDADES
+   =============================== */
+.text-center {
+    text-align: center;
+}
+
+.mt-10 {
+    margin-top: 10px;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mb-10 {
+    margin-bottom: 10px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+/* ===============================
+   RESPONSIVE
+   =============================== */
+@media (max-width: 480px) {
+
+    .container,
+    .card,
+    .login-container {
+        padding: 20px;
+        max-width: 100%;
+    }
+
+    .nav-btn {
+        font-size: 10px;
+        padding: 8px 5px;
+    }
+
+    .header h2,
+    .card-header h2 {
+        font-size: 18px;
+    }
+
+    .floating-btn,
+    .fab {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+    }
+}
+
+/* ===============================
+   ANIMACIONES
+   =============================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.container,
+.card,
+.login-container {
+    animation: fadeIn 0.5s ease;
+}

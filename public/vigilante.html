@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Vigilante - SENA</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Estilos específicos de vigilante */
+        .header h2 {
+            color: #28a745;
+        }
+
+        .vigilante-info p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .instructores-list {
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <button class="logout-btn" onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
+
+    <div class="container">
+        <div class="header">
+            <h2>🛡️ Panel Vigilante</h2>
+            <img src="assets/foto sena.png" alt="SENA Logo">
+        </div>
+
+        <div class="vigilante-info">
+            <h3 id="nombreVigilante">Vigilante: Cargando...</h3>
+            <p>🕐 Turno: <strong id="turno">-</strong></p>
+            <p>📍 Puesto: <strong id="puesto">-</strong></p>
+            <p>📅 Fecha: <strong id="fecha">-</strong></p>
+        </div>
+
+        <div class="search-box">
+            <input type="text" id="searchInstructor" placeholder="🔍 Buscar instructor por documento o nombre...">
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-entrada" onclick="registrarEntrada()">✅ Registrar Entrada</button>
+            <button class="btn btn-salida" onclick="registrarSalida()">🚪 Dar Salida</button>
+        </div>
+
+        <div id="mensaje" class="mensaje"></div>
+
+        <h3 style="margin: 20px 0 10px 0;">Instructores Hoy:</h3>
+        <div class="instructores-list" id="listaInstructores">
+            <!-- Se cargará dinámicamente -->
+        </div>
+    </div>
+
+    <div class="floating-btn" onclick="window.location.href='iniciosesion.html'" title="Cerrar sesión">↩️</div>
+
+    <script>
+        let instructores = [];
+        let asistenciasHoy = [];
+
+        // Cargar información del vigilante
+        function cargarVigilante() {
+            const nombreVigilante = localStorage.getItem('usuario') || 'Vigilante';
+            document.getElementById('nombreVigilante').textContent = `Vigilante: ${nombreVigilante}`;
+            document.getElementById('turno').textContent = 'Diurno';
+            document.getElementById('puesto').textContent = '1';
+
+            const hoy = new Date();
+            const fechaTexto = `${hoy.getDate()}/${hoy.getMonth() + 1}/${hoy.getFullYear()}`;
+            document.getElementById('fecha').textContent = fechaTexto;
+        }
+
+        // Cargar instructores y asistencias
+        async function cargarDatos() {
+            try {
+                // Cargar instructores
+                const respInst = await fetch('http://localhost:3000/api/instructores');
+                instructores = await respInst.json();
+
+                // Cargar asistencias de hoy
+                const respAsist = await fetch('http://localhost:3000/api/asistencias/hoy');
+                asistenciasHoy = await respAsist.json();
+
+                renderInstructores();
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarMensaje('Error al cargar datos', 'error');
+            }
+        }
+
+        // Renderizar lista de instructores
+        function renderInstructores(filtro = '') {
+            const lista = document.getElementById('listaInstructores');
+            lista.innerHTML = '';
+
+            const instructoresFiltrados = instructores.filter(inst => {
+                const busqueda = filtro.toLowerCase();
+                return inst.nombres.toLowerCase().includes(busqueda) ||
+                    inst.apellidos.toLowerCase().includes(busqueda) ||
+                    inst.documento.includes(busqueda);
+            });
+
+            instructoresFiltrados.forEach(instructor => {
+                const asistencia = asistenciasHoy.find(a => a.instructor_id === instructor.id);
+
+                const card = document.createElement('div');
+                card.classList.add('instructor-card');
+                if (asistencia) card.classList.add('presente');
+
+                let statusHTML = '';
+                if (asistencia) {
+                    const entrada = asistencia.hora_entrada || '-';
+                    const salida = asistencia.hora_salida || '-';
+                    statusHTML = `
+            <div>
+              <div class="status entrada">Entrada: ${entrada}</div>
+              ${salida !== '-' ? `<div class="status salida">Salida: ${salida}</div>` : ''}
+            </div>
+          `;
+                } else {
+                    statusHTML = '<span style="color:#999;">Sin registro</span>';
+                }
+
+                card.innerHTML = `
+          <div class="instructor-info">
+            <strong>${instructor.nombres} ${instructor.apellidos}</strong>
+            <small>Doc: ${instructor.documento}</small>
+          </div>
+          ${statusHTML}
+        `;
+
+                lista.appendChild(card);
+            });
+
+            if (instructoresFiltrados.length === 0) {
+                lista.innerHTML = '<p style="text-align:center;color:#999;">No se encontraron instructores</p>';
+            }
+        }
+
+        // Registrar entrada
+        async function registrarEntrada() {
+            const documento = document.getElementById('searchInstructor').value.trim();
+            if (!documento) {
+                mostrarMensaje('⚠️ Ingrese el documento del instructor', 'error');
+                return;
+            }
+
+            const instructor = instructores.find(i => i.documento === documento);
+            if (!instructor) {
+                mostrarMensaje('❌ Instructor no encontrado', 'error');
+                return;
+            }
+
+            // Verificar si ya tiene registro hoy
+            const yaRegistrado = asistenciasHoy.find(a => a.instructor_id === instructor.id);
+            if (yaRegistrado) {
+                mostrarMensaje('⚠️ Ya tiene entrada registrada hoy', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/api/asistencias/entrada', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ instructor_id: instructor.id })
+                });
+
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    mostrarMensaje(`✅ Entrada registrada: ${instructor.nombres} ${instructor.apellidos}`, 'exito');
+                    document.getElementById('searchInstructor').value = '';
+                    cargarDatos();
+                } else {
+                    mostrarMensaje('❌ ' + (data.error || 'Error al registrar'), 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarMensaje('❌ Error de conexión', 'error');
+            }
+        }
+
+        // Registrar salida
+        async function registrarSalida() {
+            const documento = document.getElementById('searchInstructor').value.trim();
+            if (!documento) {
+                mostrarMensaje('⚠️ Ingrese el documento del instructor', 'error');
+                return;
+            }
+
+            const instructor = instructores.find(i => i.documento === documento);
+            if (!instructor) {
+                mostrarMensaje('❌ Instructor no encontrado', 'error');
+                return;
+            }
+
+            const asistencia = asistenciasHoy.find(a => a.instructor_id === instructor.id);
+            if (!asistencia) {
+                mostrarMensaje('⚠️ No tiene registro de entrada hoy', 'error');
+                return;
+            }
+
+            if (asistencia.hora_salida) {
+                mostrarMensaje('⚠️ Ya tiene salida registrada', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/asistencias/salida/${asistencia.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
+
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    mostrarMensaje(`🚪 Salida registrada: ${instructor.nombres} ${instructor.apellidos}`, 'exito');
+                    document.getElementById('searchInstructor').value = '';
+                    cargarDatos();
+                } else {
+                    mostrarMensaje('❌ Error al registrar salida', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarMensaje('❌ Error de conexión', 'error');
+            }
+        }
+
+        // Mostrar mensaje
+        function mostrarMensaje(texto, tipo) {
+            const mensaje = document.getElementById('mensaje');
+            mensaje.textContent = texto;
+            mensaje.className = `mensaje ${tipo}`;
+
+            setTimeout(() => {
+                mensaje.className = 'mensaje';
+            }, 3000);
+        }
+
+        // Buscar en tiempo real
+        document.getElementById('searchInstructor').addEventListener('input', (e) => {
+            renderInstructores(e.target.value);
+        });
+
+        // Inicializar
+        cargarVigilante();
+        cargarDatos();
+
+        // Recargar cada 30 segundos
+        setInterval(cargarDatos, 30000);
+
+        // Función para cerrar sesión
+        function cerrarSesion() {
+            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                window.location.href = 'iniciosesion.html';
+            }
+        }
+    </script>
+</body>
+
+</html>

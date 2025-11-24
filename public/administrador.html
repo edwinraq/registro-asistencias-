@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Administrador - Instructores</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Estilos específicos de administrador */
+    .container {
+      position: relative;
+    }
+
+    .floating-btn {
+      bottom: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      position: absolute;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      width: 300px;
+      text-align: center;
+    }
+
+    .close-btn {
+      float: right;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .date {
+      margin: 15px 0;
+      font-size: 14px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
+    .instructor-avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #7FB77E 0%, #6FA86F 100%);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 16px;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .instructor-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .instructor-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-activo {
+      background: #d4edda;
+      color: #155724;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .admin-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #7FB77E 0%, #6FA86F 100%);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 22px;
+      margin-right: 12px;
+    }
+
+    .admin-box {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      margin: 15px 0;
+    }
+
+    .logout-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+    }
+  </style>
+</head>
+
+<body>
+  <button class="logout-btn" onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
+
+  <div class="container">
+    <!-- Encabezado -->
+    <div class="header">
+      <span onclick="window.location.href='iniciosesion.html'" style="cursor:pointer;">&lt;&lt;</span>
+      <img src="assets/foto sena.png" alt="Logo SENA">
+    </div>
+
+    <!-- Administrador -->
+    <div class="admin-box">
+      <div class="admin-avatar">A</div>
+      <div>
+        <strong>Administrador</strong>
+        <small style="display:block; color:#6c757d;">Panel de gestión</small>
+      </div>
+    </div>
+
+    <!-- Menú de navegación -->
+    <div class="nav-menu">
+      <button class="nav-btn active" onclick="window.location.href='administrador.html'">👥 Instructores</button>
+      <button class="nav-btn" onclick="window.location.href='asistencias.html'">📋 Asistencias</button>
+      <button class="nav-btn" onclick="window.location.href='registros.html'">✅ Registros</button>
+      <button class="nav-btn" onclick="window.location.href='codigoqr.html'">📷 QR</button>
+    </div>
+
+    <!-- Fecha -->
+    <div class="date">26 / 10 / 2025</div>
+
+    <!-- Lista de Instructores -->
+    <div id="instructores">
+      <!-- Se cargará dinámicamente desde la base de datos -->
+    </div>
+
+    <!-- Botón flotante -->
+    <div class="floating-btn" onclick="window.location.href='creacionperfil.html'">+</div>
+  </div>
+
+  <!-- Modal para agregar instructores -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">×</span>
+      <h3>Agregar Instructor</h3>
+      <input type="text" id="nombreInstructor" placeholder="Nombre completo">
+      <button onclick="agregarInstructor()">Guardar</button>
+    </div>
+  </div>
+
+  <script>
+    // Cargar instructores desde la base de datos
+    async function cargarInstructores() {
+      try {
+        const response = await fetch('http://localhost:3000/api/instructores');
+        const instructores = await response.json();
+
+        const contenedor = document.getElementById('instructores');
+        contenedor.innerHTML = '';
+
+        instructores.forEach(instructor => {
+          const card = document.createElement('div');
+          card.classList.add('instructor-card');
+
+          // Generar iniciales del instructor
+          const iniciales = `${instructor.nombres.charAt(0)}${instructor.apellidos.charAt(0)}`.toUpperCase();
+
+          card.innerHTML = `
+            <div class="instructor-avatar">${iniciales}</div>
+            <div class="instructor-info">
+              <strong>${instructor.nombres} ${instructor.apellidos}</strong>
+              <small>📄 ${instructor.documento}</small>
+            </div>
+            <div class="instructor-actions">
+              <span class="badge-activo">Activo</span>
+            </div>
+          `;
+          contenedor.appendChild(card);
+        });
+      } catch (error) {
+        console.error('Error al cargar instructores:', error);
+        alert('Error al cargar los instructores');
+      }
+    }
+
+    // Abrir modal
+    function openModal() {
+      document.getElementById("modal").style.display = "flex";
+    }
+
+    // Cerrar modal
+    function closeModal() {
+      document.getElementById("modal").style.display = "none";
+    }
+
+    // Agregar nuevo instructor dinámicamente (método rápido desde modal)
+    function agregarInstructor() {
+      const nombre = document.getElementById("nombreInstructor").value.trim();
+      if (nombre === "") {
+        alert("Ingrese un nombre");
+        return;
+      }
+
+      // Redirigir al formulario completo
+      alert("Use el botón + para ir al formulario completo de creación");
+      closeModal();
+    }
+
+    // Cargar instructores al iniciar
+    cargarInstructores();
+
+    // Función para cerrar sesión
+    function cerrarSesion() {
+      if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+        window.location.href = 'iniciosesion.html';
+      }
+    }
+  </script>
+</body>
+
+</html>
