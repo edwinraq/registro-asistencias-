@@ -4,7 +4,7 @@
 const mysql = require('mysql2/promise');
 
 // Configuración para Railway (usa DATABASE_URL si existe, sino variables individuales)
-const config = process.env.DATABASE_URL 
+const config = process.env.DATABASE_URL
     ? { uri: process.env.DATABASE_URL }
     : {
         host: process.env.DB_HOST || 'localhost',
