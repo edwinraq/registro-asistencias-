@@ -1,22 +1,27 @@
 // ===============================
 // CONFIGURACIÓN DE BASE DE DATOS
 // ===============================
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 
-const conexion = mysql.createConnection({
+const pool = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'registro_asistencia'
+    database: process.env.DB_NAME || 'registro_asistencia',
+    port: process.env.DB_PORT || 3306,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
 // Verificar conexión
-conexion.connect(err => {
-    if (err) {
-        console.error('❌ Error al conectar con MySQL:', err);
-        process.exit(1);
-    }
-    console.log('✔ Conexión exitosa a la base de datos registro_asistencia');
-});
+pool.getConnection()
+    .then(connection => {
+        console.log('✔ Conexión exitosa a la base de datos', process.env.DB_NAME || 'registro_asistencia');
+        connection.release();
+    })
+    .catch(err => {
+        console.error('❌ Error al conectar con MySQL:', err.message);
+    });
 
-module.exports = conexion;
+module.exports = pool;
