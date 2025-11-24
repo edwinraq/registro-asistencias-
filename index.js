@@ -8,7 +8,21 @@ const cors = require('cors');
 const path = require('path');
 
 // Importar conexión a la base de datos
-require('./config/database');
+const db = require('./config/database');
+
+// Crear tablas automáticamente
+(async () => {
+    try {
+        await db.query(`CREATE TABLE IF NOT EXISTS usuarios (id INT AUTO_INCREMENT PRIMARY KEY, usuario VARCHAR(50) NOT NULL UNIQUE, contrasena VARCHAR(255) NOT NULL, tipo ENUM('admin','vigilante','instructor') DEFAULT 'instructor', creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`);
+        await db.query(`CREATE TABLE IF NOT EXISTS instructores (id INT AUTO_INCREMENT PRIMARY KEY, nombres VARCHAR(100) NOT NULL, apellidos VARCHAR(100) NOT NULL, correo VARCHAR(100) NOT NULL UNIQUE, telefono VARCHAR(20), documento VARCHAR(20) NOT NULL UNIQUE, qr_code TEXT, creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`);
+        await db.query(`CREATE TABLE IF NOT EXISTS asistencias (id INT AUTO_INCREMENT PRIMARY KEY, instructor_id INT NOT NULL, fecha DATE NOT NULL, hora_entrada TIME, hora_salida TIME, estado ENUM('Pendiente','Registrada') DEFAULT 'Pendiente', KEY instructor_id (instructor_id))`);
+        await db.query(`INSERT IGNORE INTO usuarios (usuario, contrasena, tipo) VALUES ('admin', '1234', 'admin'), ('vigilante', '1234', 'vigilante')`);
+        await db.query(`INSERT IGNORE INTO instructores (nombres, apellidos, correo, telefono, documento) VALUES ('Edwin', 'Raquejo', 'edwinraquejo@gmail.com', '3154145891', '1252365925')`);
+        console.log('✅ Tablas creadas/verificadas');
+    } catch (err) {
+        console.error('⚠️ Error tablas:', err.message);
+    }
+})();
 
 // Importar rutas
 const authRoutes = require('./src/routes/authRoutes');
