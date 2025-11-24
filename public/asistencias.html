@@ -117,8 +117,8 @@
     async function cargarAsistencias(fecha = null) {
       try {
         const url = fecha
-          ? `http://localhost:3000/api/asistencias?fecha=${fecha}`
-          : 'http://localhost:3000/api/asistencias/hoy';
+          ? `/api/asistencias?fecha=${fecha}`
+          : '/api/asistencias/hoy';
 
         const response = await fetch(url);
         asistencias = await response.json();

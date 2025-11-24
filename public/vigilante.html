@@ -193,7 +193,7 @@
             }
 
             try {
-                const response = await fetch('http://localhost:3000/api/asistencias/entrada', {
+                const response = await fetch('/api/asistencias/entrada', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ instructor_id: instructor.id })
@@ -239,7 +239,7 @@
             }
 
             try {
-                const response = await fetch(`http://localhost:3000/api/asistencias/salida/${asistencia.id}`, {
+                const response = await fetch(`/api/asistencias/salida/${asistencia.id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({})

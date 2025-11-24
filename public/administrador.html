@@ -188,7 +188,7 @@
     // Cargar instructores desde la base de datos
     async function cargarInstructores() {
       try {
-        const response = await fetch('http://localhost:3000/api/instructores');
+        const response = await fetch('/api/instructores');
         const instructores = await response.json();
 
         const contenedor = document.getElementById('instructores');

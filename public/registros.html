@@ -136,11 +136,11 @@
     async function cargarDatos() {
       try {
         // Cargar instructores
-        const respInstructores = await fetch('http://localhost:3000/api/instructores');
+        const respInstructores = await fetch('/api/instructores');
         instructores = await respInstructores.json();
 
         // Cargar asistencias de hoy
-        const respAsistencias = await fetch('http://localhost:3000/api/asistencias/hoy');
+        const respAsistencias = await fetch('/api/asistencias/hoy');
         asistenciasHoy = await respAsistencias.json();
 
         renderInstructores();
@@ -186,7 +186,7 @@
     // Registrar salida
     async function registrarSalida(asistenciaId) {
       try {
-        const response = await fetch(`http://localhost:3000/api/asistencias/salida/${asistenciaId}`, {
+        const response = await fetch(`/api/asistencias/salida/${asistenciaId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -219,7 +219,7 @@
     // Registrar nueva entrada
     async function registrarEntrada(instructorId) {
       try {
-        const response = await fetch('http://localhost:3000/api/asistencias/entrada', {
+        const response = await fetch('/api/asistencias/entrada', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
