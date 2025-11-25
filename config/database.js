@@ -3,13 +3,13 @@
 // ===============================
 const mysql = require('mysql2/promise');
 
-// Usar variables individuales (Railway las proporciona automáticamente)
+// Railway proporciona variables con prefijo MYSQL automáticamente
 const config = {
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'registro_asistencia',
-    port: parseInt(process.env.DB_PORT) || 3306
+    host: process.env.MYSQLHOST || process.env.DB_HOST || 'localhost',
+    user: process.env.MYSQLUSER || process.env.DB_USER || 'root',
+    password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || '',
+    database: process.env.MYSQLDATABASE || process.env.DB_NAME || 'registro_asistencia',
+    port: parseInt(process.env.MYSQLPORT || process.env.DB_PORT || '3306')
 };
 
 const pool = mysql.createPool({
