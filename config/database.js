@@ -16,7 +16,8 @@ const pool = mysql.createPool({
     ...config,
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    queueLimit: 0,
+    ssl: process.env.DB_HOST && process.env.DB_HOST.includes('aivencloud') ? { rejectUnauthorized: false } : undefined
 });// Verificar conexión
 pool.getConnection()
     .then(connection => {
